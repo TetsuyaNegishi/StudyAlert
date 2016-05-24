@@ -5,6 +5,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +23,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView countText;					//テキストビュー
     private int count = 0;						//カウント
     private Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
+
+    // サウンド
+    private AudioAttributes audioAttributes;
+    private SoundPool soundPool;
+    private int sound;
 
     // センサーマネージャー
     private SensorManager manager;
@@ -42,6 +49,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build();
+
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(audioAttributes)
+                .setMaxStreams(2)
+                .build();
+
+        sound = soundPool.load(this, R.raw.tes, 1);
 
         //タイマーインスタンス生成
         this.mainTimer = new Timer();
@@ -162,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     } else if (count > 20) {
                         countText.setTextColor(Color.BLUE);
                     } else if (count > 10) {
+                        soundPool.play(sound, 1.0f, 1.0f, 0, 0, 1);
                         countText.setTextColor(Color.YELLOW);
                     }
 
