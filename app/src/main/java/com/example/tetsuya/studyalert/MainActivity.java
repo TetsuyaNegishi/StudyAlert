@@ -116,9 +116,7 @@ public class MainActivity extends AppCompatActivity {
 //                        soundPool.play(sound, 1.0f, 1.0f, 0, 0, 1);
                     }
                     if (count == 20) {
-
-                    }
-                    if(count == 30) {
+                        studyState.nextState();
                     }
                     Log.d("count", String.valueOf(count));
                 }

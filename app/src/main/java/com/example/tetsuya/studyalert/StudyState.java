@@ -45,7 +45,7 @@ public class StudyState {
 
     private class NormalState extends State {
         public State nextState() {
-            return new AngerState();
+            return new HatenaState();
         }
         public int getImageId() {
             return R.drawable.s_woman1;
@@ -58,6 +58,15 @@ public class StudyState {
         }
         public int getImageId() {
             return R.drawable.s_woman3;
+        }
+    }
+
+    private class HatenaState extends State {
+        public State nextState() {
+            return new AngerState();
+        }
+        public int getImageId() {
+            return R.drawable.s_woman2;
         }
     }
 
