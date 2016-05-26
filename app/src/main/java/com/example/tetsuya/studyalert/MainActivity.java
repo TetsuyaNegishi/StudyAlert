@@ -9,6 +9,7 @@ import android.media.SoundPool;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         // センサーマネージャーを取得
         manager = (SensorManager)getSystemService(SENSOR_SERVICE);
-
         // センサーのイベントリスナーを登録
         listener = new SensorEventListener() {
             @Override
@@ -77,23 +77,28 @@ public class MainActivity extends AppCompatActivity {
                         for(float accell:fAccell) {
                             if(accell > ACCELL_MAX){
                                 count = 0;
+                                studyState.detectStudy();
                             }
                         }
                         break;
                 }
-
             }
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int i) {
             }
         };
-
+        // リスナー設定：加速度
+        manager.registerListener(
+                listener,
+                manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
+                SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        manager.unregisterListener(listener);
         mainTimer.cancel();
         this.finish();
         this.moveTaskToBack(true);
@@ -111,9 +116,11 @@ public class MainActivity extends AppCompatActivity {
 //                        soundPool.play(sound, 1.0f, 1.0f, 0, 0, 1);
                     }
                     if (count == 20) {
+
                     }
                     if(count == 30) {
                     }
+                    Log.d("count", String.valueOf(count));
                 }
             });
         }

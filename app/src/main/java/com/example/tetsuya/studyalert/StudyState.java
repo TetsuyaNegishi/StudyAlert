@@ -1,6 +1,7 @@
 package com.example.tetsuya.studyalert;
 
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -23,10 +24,23 @@ public class StudyState {
         state = state.nextState();
         imageView.setImageResource(state.getImageId());
     }
+    void detectStudy() {
+        state = state.detectStudy();
+        imageView.setImageResource(state.getImageId());
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                reset();
+            }
+        }, 1000);
+    }
 
     abstract class State {
         public abstract State nextState();
         public abstract int getImageId();
+        public State detectStudy() {
+            return new OkState();
+        }
     }
 
     private class NormalState extends State {
@@ -40,10 +54,19 @@ public class StudyState {
 
     private class AngerState extends State {
         public State nextState() {
-            return new AngerState();
+            return this;
         }
         public int getImageId() {
             return R.drawable.s_woman3;
+        }
+    }
+
+    private class OkState extends State {
+        public State nextState() {
+            return this;
+        }
+        public int getImageId() {
+            return R.drawable.s_woman4;
         }
     }
 }
