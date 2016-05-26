@@ -10,7 +10,9 @@ import android.media.SoundPool;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -50,16 +52,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // アプリ起動中画面をスリープさせない
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // 音声読み込み
         audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                 .build();
-
         soundPool = new SoundPool.Builder()
                 .setAudioAttributes(audioAttributes)
                 .setMaxStreams(2)
                 .build();
-
         sound = soundPool.load(this, R.raw.tes, 1);
 
         //タイマーインスタンス生成
@@ -89,11 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         // センサーのイベントリスナーを登録
         listener = new SensorEventListener() {
-            // 値変更時
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-
-                // センサーの種類で値を取得
                 switch( sensorEvent.sensor.getType()) {
                     // 加速度
                     case Sensor.TYPE_LINEAR_ACCELERATION:
@@ -107,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 
-                        if(xMax < fAccell[0]){
-                            xMax = fAccell[0];
-                        }
-                        if(yMax < fAccell[1]){
-                            yMax = fAccell[1];
-                        }
-                        if(zMax < fAccell[2]){
-                            zMax = fAccell[2];
-                        }
+//                        if(xMax < fAccell[0]){
+//                            xMax = fAccell[0];
+//                        }
+//                        if(yMax < fAccell[1]){
+//                            yMax = fAccell[1];
+//                        }
+//                        if(zMax < fAccell[2]){
+//                            zMax = fAccell[2];
+//                        }
 
                         String str = "";
                         str += "加速度センサー（重力あり）\n"
@@ -162,6 +163,16 @@ public class MainActivity extends AppCompatActivity {
 
         // リスナー解除
 //        manager.unregisterListener(listener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("TAG", "destroy");
+        mainTimer.cancel();
+
+        this.finish();
+        this.moveTaskToBack(true);
     }
 
     public class MainTimerTask extends TimerTask {
