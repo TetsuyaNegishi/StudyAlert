@@ -2,6 +2,8 @@ package com.example.tetsuya.studyalert;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 /**
@@ -9,11 +11,15 @@ import android.widget.ImageView;
  */
 public class StudyState {
     private ImageView imageView;
+    private Button stopButton;
     private Handler mHandler = new Handler();
     private State state;
 
-    public StudyState(ImageView imageView) {
+    public StudyState(ImageView imageView, final Button stopButton) {
         this.imageView = imageView;
+        this.stopButton = stopButton;
+
+        this.stopButton.setVisibility(View.INVISIBLE);
         reset();
     }
     void reset() {
@@ -27,18 +33,13 @@ public class StudyState {
     void detectStudy() {
         state = state.detectStudy();
         imageView.setImageResource(state.getImageId());
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                reset();
-            }
-        }, 1000);
     }
 
     abstract class State {
         public abstract State nextState();
         public abstract int getImageId();
         public State detectStudy() {
+            Log.d("log", "state_detectStudy");
             return new OkState();
         }
     }
@@ -52,15 +53,6 @@ public class StudyState {
         }
     }
 
-    private class AngerState extends State {
-        public State nextState() {
-            return this;
-        }
-        public int getImageId() {
-            return R.drawable.s_woman3;
-        }
-    }
-
     private class HatenaState extends State {
         public State nextState() {
             return new AngerState();
@@ -70,7 +62,31 @@ public class StudyState {
         }
     }
 
+    private class AngerState extends State {
+        public AngerState() {
+            stopButton.setVisibility(View.VISIBLE);
+        }
+        public State nextState() {
+            return this;
+        }
+        public int getImageId() {
+            return R.drawable.s_woman3;
+        }
+        @Override
+        public State detectStudy() {
+            return this;
+        }
+    }
+
     private class OkState extends State {
+        public OkState() {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    reset();
+                }
+            }, 1000);
+        }
         public State nextState() {
             return this;
         }

@@ -10,7 +10,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.util.Timer;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
 
     private StudyState studyState;
+    private Button stopButton;
 
     // サウンド
     private AudioAttributes audioAttributes;
@@ -43,8 +46,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        studyState = new StudyState((ImageView)findViewById(R.id.imageView));
-
+        stopButton = (Button)findViewById(R.id.stopButton);
+        studyState = new StudyState((ImageView)findViewById(R.id.imageView), stopButton);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                studyState.reset();
+                stopButton.setVisibility(View.INVISIBLE);
+                count = 0;
+            }
+        });
         // アプリ起動中画面をスリープさせない
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -118,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
                     if (count == 20) {
                         studyState.nextState();
                     }
-                    Log.d("count", String.valueOf(count));
                 }
             });
         }
