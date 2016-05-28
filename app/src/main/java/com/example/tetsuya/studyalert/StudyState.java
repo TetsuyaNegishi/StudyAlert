@@ -15,10 +15,9 @@ public class StudyState {
     private Handler mHandler = new Handler();
     private State state;
 
-    public StudyState(ImageView imageView, final Button stopButton) {
-        this.imageView = imageView;
-        this.stopButton = stopButton;
-
+    public StudyState(MainActivity mainActivity) {
+        this.imageView = (ImageView)mainActivity.findViewById(R.id.imageView);
+        this.stopButton = (Button)mainActivity.findViewById(R.id.stopButton);
         this.stopButton.setVisibility(View.INVISIBLE);
         reset();
     }

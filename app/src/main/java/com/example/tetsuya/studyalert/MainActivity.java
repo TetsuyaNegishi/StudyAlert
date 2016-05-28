@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         stopButton = (Button)findViewById(R.id.stopButton);
-        studyState = new StudyState((ImageView)findViewById(R.id.imageView), stopButton);
+        studyState = new StudyState(this);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
